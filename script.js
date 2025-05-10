@@ -3,7 +3,7 @@ const videoPlayer = document.getElementById('videoPlayer');
 // Specify the file names exactly as they are in the folder
 const playlist = [
   'videos/video1.mp4',
-  'videos/video2.mp4',
+  //'videos/video2.mp4',
   'videos/video3.mp4',
   'videos/video4.mp4',
   'videos/video5.mp4'
