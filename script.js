@@ -1,41 +1,39 @@
-// List of video files in the playlist
-const videos = [
-  "videos/video1.mp4",
-  "videos/video2.mp4",
-  "videos/video3.mp4",
-  "videos/video4.mp4",
-  "videos/video5.mp4"
+const videoPlayer = document.getElementById('videoPlayer');
+
+// List of video file paths
+const playlist = [
+  'videos/video1.mp4',
+  'videos/video4.mp4',
+  'videos/video3.mp4',
+  'videos/video2.mp4',
+  'videos/video5.mp4'
 ];
 
-let currentVideo = 0;  // Current video index
-const videoPlayer = document.getElementById("videoPlayer");  // Get the video player element
+let currentIndex = 0;
 
-// Function to preload the next video to minimize delay when switching
-function preloadNextVideo() {
-  const nextVideo = new Video();
-  nextVideo.src = videos[(currentVideo + 1) % videos.length];  // Preload the next video
-  nextVideo.preload = "auto";  // Preload the video in advance
+// Function to load and play the current video
+function playVideo(index) {
+  videoPlayer.src = playlist[index];
+  videoPlayer.load();
+
+  // Try to play the video, retry on failure instead of reloading
+  videoPlayer.play().catch(err => {
+    console.warn('Playback error. Retrying in 2 seconds:', err);
+    setTimeout(() => playVideo(index), 2000); // Retry after delay
+  });
 }
 
-// Function to change the video
-function changeVideo() {
-  // Update the current video index to the next one in the array
-  currentVideo = (currentVideo + 1) % videos.length;
+// Reload the page every 12 hours to ensure stability
+setInterval(() => {
+  console.log('12 hours passed. Reloading the page...');
+  location.reload();
+}, 43200000); // 12 hours = 43,200,000 milliseconds
 
-  // Update the video source
-  const videoSource = document.getElementById("videoSource");
-  videoSource.src = videos[currentVideo];
+// Start playing the first video
+playVideo(currentIndex);
 
-  // Reload and play the new video
-  videoPlayer.load();  // Reload the video element
-  videoPlayer.play();  // Start playing the video
-
-  // Preload the next video to reduce delays
-  preloadNextVideo();
-}
-
-// Automatically change the video every 30 seconds (you can adjust the interval)
-setInterval(changeVideo, 30000);  // 30 seconds
-
-// Initial preload for the next video
-preloadNextVideo();
+// When the video ends, play the next one in the playlist
+videoPlayer.addEventListener('ended', () => {
+  currentIndex = (currentIndex + 1) % playlist.length;
+  playVideo(currentIndex);
+});
