@@ -28,19 +28,19 @@
 </head>
 <body>
   <div class="overlay">Odtwarzanie wideo…</div>
-  <video id="videoPlayer" autoplay muted controls playsinline></video>
+  <video id="videoPlayer" autoplay muted controls playsinline>
+    <source src="video1.mp4" type="video/mp4">
+    Twoja przeglądarka nie obsługuje tagu wideo.
+  </video>
 
   <script>
-    // Lista linków do plików wideo (proszę podmienić na własne linki)
-    const videos = [
-      "https://yourserver.com/video1.mp4",
-      "https://yourserver.com/video2.mp4",
-      "https://yourserver.com/video3.mp4"
-    ];
+    // List of video files
+    const videos = ["video1.mp4", "video2.mp4"];
 
     let current = 0;
     const player = document.getElementById('videoPlayer');
 
+    // Play the next video in the list
     function playNext() {
       player.src = videos[current];
       player.load();
@@ -48,11 +48,15 @@
       current = (current + 1) % videos.length;
     }
 
-    // Automatycznie odtwarzaj następne wideo po zakończeniu
-    player.addEventListener('ended', playNext);
+    // If there's more than one video, play the next on 'ended'
+    if (videos.length > 1) {
+      player.addEventListener('ended', playNext);
+    }
 
-    // Uruchom pierwsze wideo
-    playNext();
+    // Start playing the first video
+    player.src = videos[current];
+    player.load();
+    player.play();
   </script>
 </body>
 </html>
