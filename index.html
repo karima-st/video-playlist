@@ -33,19 +33,17 @@
 
     // Play the next video
     function playNext() {
+      current = (current + 1) % videos.length;  // Switch to next video
       player.src = videos[current];
       player.load();
       player.play();
-      current = (current + 1) % videos.length;
     }
 
-    // Play next video on 'ended'
+    // Play next video on 'ended' event
     player.addEventListener('ended', playNext);
 
     // Start with the first video
-    player.src = videos[current];
-    player.load();
-    player.play();
+    playNext();  // Call the function to start playing the first video
   </script>
 </body>
 </html>
