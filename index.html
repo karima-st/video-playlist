@@ -16,31 +16,22 @@
       object-fit: contain;
       background: black;
     }
-    .overlay {
-      position: absolute;
-      top: 10px;
-      left: 10px;
-      color: white;
-      font-family: sans-serif;
-      font-size: 20px;
-    }
   </style>
 </head>
 <body>
-  <div class="overlay">Odtwarzanie wideo…</div>
   <video id="videoPlayer" autoplay muted controls playsinline>
     <source src="video1.mp4" type="video/mp4">
     Twoja przeglądarka nie obsługuje tagu wideo.
   </video>
 
   <script>
-    // List of video files
+    // List of videos to play in a loop
     const videos = ["video1.mp4", "video2.mp4"];
 
     let current = 0;
     const player = document.getElementById('videoPlayer');
 
-    // Play the next video in the list
+    // Play the next video
     function playNext() {
       player.src = videos[current];
       player.load();
@@ -48,12 +39,10 @@
       current = (current + 1) % videos.length;
     }
 
-    // If there's more than one video, play the next on 'ended'
-    if (videos.length > 1) {
-      player.addEventListener('ended', playNext);
-    }
+    // Play next video on 'ended'
+    player.addEventListener('ended', playNext);
 
-    // Start playing the first video
+    // Start with the first video
     player.src = videos[current];
     player.load();
     player.play();
