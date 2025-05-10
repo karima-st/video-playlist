@@ -1,156 +1,26 @@
 <!DOCTYPE html>
-<html lang="pl">
+<html lang="en">
 <head>
   <meta charset="UTF-8" />
-  <title>GirlPower</title>
-  <meta http-equiv="refresh" content="3600">
-
-  <style>
-    body {
-      margin: 0;<!DOCTYPE html>
-<html lang="pl">
-<head>
-  <meta charset="UTF-8" />
-  <title>GirlPower</title>
-  <meta http-equiv="refresh" content="3600">
-
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Video Playlist</title>
   <style>
     body {
       margin: 0;
       background: black;
-      overflow: hidden;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      height: 100vh;
     }
     video {
-      position: absolute;
-      width: 100vw;
-      height: 100vh;
-      object-fit: contain;
-      background-color: black;
-    }
-    .info {
-      position: absolute;
-      top: 10px;
-      left: 50%;
-      transform: translateX(-50%);
-      color: white;
-      font-family: sans-serif;
-      font-size: 16px;
-      opacity: 0.6;
-      background-color: rgba(0, 0, 0, 0.3);
-      padding: 4px 12px;
-      border-radius: 8px;
+      max-width: 100%;
+      max-height: 100%;
     }
   </style>
 </head>
 <body>
-  <video id="player" autoplay muted playsinline></video>
-  <div class="info">Trwa odtwarzanie materiału wideo. Proszę nie wyłączać urządzenia.</div>
-
-  <script>
-    const playlist = [
-      "video1.mp4",
-      "video2.mp4",
-      "video3.mp4",
-      "video4.mp4"
-    ];
-
-    let current = 0;
-    const player = document.getElementById("player");
-
-    function playVideo(index) {
-      player.src = playlist[index];
-      player.load();
-      player.play().catch(err => console.error(`Playback error (${playlist[index]}):`, err));
-    }
-
-    player.onended = () => {
-      current = (current + 1) % playlist.length;
-      playVideo(current);
-    };
-
-    playVideo(current);
-
-    setInterval(() => {
-      fetch(window.location.href, { method: 'HEAD', cache: 'no-store' })
-        .then(response => {
-          if (response.ok) location.reload();
-        })
-        .catch(err => console.log('Update check failed:', err));
-    }, 60000);
-  </script>
-</body>
-</html>
-
-      background: black;
-      overflow: hidden;
-    }
-    video {
-      position: absolute;
-      width: 100vw;
-      height: 100vh;
-      object-fit: contain;
-      background-color: black;
-    }
-    .info {
-      position: absolute;
-      top: 10px;
-      left: 50%;
-      transform: translateX(-50%);
-      color: white;
-      font-family: sans-serif;
-      font-size: 16px;
-      opacity: 0.6;
-      background-color: rgba(0, 0, 0, 0.3);
-      padding: 4px 12px;
-      border-radius: 8px;
-    }
-  </style>
-</head>
-<body>
-  <video id="player" autoplay muted playsinline></video>
-
-  <div class="info">Trwa odtwarzanie materiału wideo. Proszę nie wyłączać urządzenia.</div>
-
-  <script>
-    // Playlist of videos
-    const playlist = [
-      "video1.mp4",
-      "video2.mp4",
-      "video3.mp4",
-      "video4.mp4"
-    ];
-
-    let currentIndex = 0;
-    const player = document.getElementById("player");
-
-    // Function to play video by index
-    function playVideo(index) {
-      player.src = playlist[index];
-      player.load();
-      player.play().catch(err => {
-        console.error(`Playback error: ${playlist[index]}`, err);
-      });
-    }
-
-    // Move to next video on end
-    player.onended = () => {
-      currentIndex = (currentIndex + 1) % playlist.length;
-      playVideo(currentIndex);
-    };
-
-    // Initial playback
-    playVideo(currentIndex);
-
-    // Optional: reload to check for updates every 60s
-    setInterval(() => {
-      fetch(window.location.href, { method: 'HEAD', cache: 'no-store' })
-        .then(response => {
-          if (response.ok) location.reload();
-        })
-        .catch(err => {
-          console.log('Update check failed:', err);
-        });
-    }, 60000);
-  </script>
+  <video id="videoPlayer" autoplay muted playsinline></video>
+  <script src="script.js"></script>
 </body>
 </html>
