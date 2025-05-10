@@ -1,49 +1,92 @@
 <!DOCTYPE html>
 <html lang="pl">
 <head>
-  <meta charset="UTF-8">
-  <title>Odtwarzacz Wideo</title>
+  <meta charset="UTF-8" />
+  <title>Pętla wideo</title>
+
+  <!-- Auto-refresh page every 3600 seconds (1 hour) -->
+  <meta http-equiv="refresh" content="3600">
+
   <style>
-    body, html {
+    body {
       margin: 0;
-      padding: 0;
-      height: 100%;
       background: black;
+      overflow: hidden;
     }
     video {
-      width: 100%;
-      height: 100%;
-      object-fit: contain;
-      background: black;
+      position: absolute;
+      width: 100vw;
+      height: 100vh;
+      object-fit: cover;
+    }
+    #video1 { z-index: 1; }
+    #video2 { z-index: 0; }
+    .info {
+      position: absolute;
+      bottom: 10px;
+      left: 10px;
+      color: white;
+      font-family: sans-serif;
+      font-size: 14px;
+      opacity: 0.5;
     }
   </style>
 </head>
 <body>
-  <video id="videoPlayer" autoplay muted playsinline>
-    <source src="video1.mp4" type="video/mp4">
-    Twoja przeglądarka nie obsługuje tagu wideo.
-  </video>
+  <video id="video1" autoplay muted playsinline></video>
+  <video id="video2" muted playsinline></video>
+
+  <!-- Optional user message -->
+  <div class="info">Trwa odtwarzanie materiału wideo. Proszę nie wyłączać urządzenia.</div>
 
   <script>
-    // List of videos to play in a loop
-    const videos = ["video1.mp4", "video2.mp4", "video3.mp4"];
+    // List of video files to play in loop
+    const playlist = [
+      "video1.mp4",
+      "video2.mp4",
+      "video3.mp4"
+    ];
 
     let current = 0;
-    const player = document.getElementById('videoPlayer');
+    let activeVideo = document.getElementById("video1");
+    let nextVideo = document.getElementById("video2");
 
-    // Play the next video
+    // Play the next video with seamless transition
     function playNext() {
-      current = (current + 1) % videos.length;  // Switch to next video
-      player.src = videos[current];
-      player.load();
-      player.play();
+      current = (current + 1) % playlist.length;
+
+      nextVideo.src = playlist[current];
+      nextVideo.load();
+      nextVideo.oncanplaythrough = () => {
+        nextVideo.play();
+        activeVideo.pause();
+        activeVideo.style.zIndex = 0;
+        nextVideo.style.zIndex = 1;
+
+        // Swap active and next video
+        [activeVideo, nextVideo] = [nextVideo, activeVideo];
+
+        // Set next callback
+        activeVideo.onended = playNext;
+      };
     }
 
-    // Play next video on 'ended' event
-    player.addEventListener('ended', playNext);
+    // Start the first video
+    activeVideo.src = playlist[current];
+    activeVideo.onended = playNext;
+    activeVideo.load();
+    activeVideo.play();
 
-    // Start with the first video
-    playNext();  // Call the function to start playing the first video
+    // Periodically check for updates and reload page if needed
+    setInterval(() => {
+      fetch(window.location.href, { method: 'HEAD', cache: 'no-store' })
+        .then(response => {
+          if (response.ok) {
+            location.reload();
+          }
+        })
+        .catch(err => console.log('Update check failed', err));
+    }, 60000); // Check every 60 seconds
   </script>
 </body>
 </html>
