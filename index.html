@@ -41,7 +41,7 @@
   <div class="info">Trwa odtwarzanie materiału wideo. Proszę nie wyłączać urządzenia.</div>
 
   <script>
-    // Video playlist
+    // Full playlist
     const playlist = [
       "video1.mp4",
       "video2.mp4",
@@ -50,29 +50,25 @@
     ];
 
     let current = 0;
-    let endedHandled = false;
     const player = document.getElementById("player");
 
+    // Function to play a specific video
     function playVideo(index) {
-      endedHandled = false;
       player.src = playlist[index];
       player.load();
-      player.play().catch(err => console.error("Playback error:", err));
+      player.play().catch(err => console.error("Błąd odtwarzania:", err));
     }
 
-    // Use timeupdate for better compatibility
-    player.addEventListener("timeupdate", () => {
-      if (!endedHandled && player.duration && player.currentTime >= player.duration - 0.3) {
-        endedHandled = true;
-        current = (current + 1) % playlist.length;
-        playVideo(current);
-      }
-    });
+    // When a video ends, go to the next
+    player.onended = () => {
+      current = (current + 1) % playlist.length;
+      playVideo(current);
+    };
 
-    // Start playback
+    // Start the first video
     playVideo(current);
 
-    // Optional reload check
+    // Optional auto-reload every 60 seconds to check for updates
     setInterval(() => {
       fetch(window.location.href, { method: 'HEAD', cache: 'no-store' })
         .then(response => {
