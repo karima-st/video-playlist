@@ -4,7 +4,7 @@
   <meta charset="UTF-8" />
   <title>GirlPower</title>
 
-  <!-- Auto-refresh page every 3600 seconds (1 hour) -->
+  <!-- Auto-refresh the page every 3600 seconds (1 hour) -->
   <meta http-equiv="refresh" content="3600">
 
   <style>
@@ -18,9 +18,8 @@
       width: 100vw;
       height: 100vh;
       object-fit: contain;
+      background-color: black;
     }
-    #video1 { z-index: 1; }
-    #video2 { z-index: 0; }
     .info {
       position: absolute;
       bottom: 10px;
@@ -33,14 +32,14 @@
   </style>
 </head>
 <body>
-  <video id="video1" autoplay muted playsinline></video>
-  <video id="video2" muted playsinline></video>
+  <!-- Main video player -->
+  <video id="player" autoplay muted playsinline></video>
 
-  <!-- Optional user message -->
-  <div class="info">This is what you need!.</div>
+  <!-- User-facing message in Polish -->
+  <div class="info">Trwa odtwarzanie materiału wideo. Proszę nie wyłączać urządzenia.</div>
 
   <script>
-    // List of video files to play in loop
+    // Array of video files to loop through
     const playlist = [
       "video1.mp4",
       "video2.mp4",
@@ -48,36 +47,25 @@
     ];
 
     let current = 0;
-    let activeVideo = document.getElementById("video1");
-    let nextVideo = document.getElementById("video2");
+    const player = document.getElementById("player");
 
-    // Play the next video with seamless transition
-    function playNext() {
-      current = (current + 1) % playlist.length;
-
-      nextVideo.src = playlist[current];
-      nextVideo.load();
-      nextVideo.oncanplaythrough = () => {
-        nextVideo.play();
-        activeVideo.pause();
-        activeVideo.style.zIndex = 0;
-        nextVideo.style.zIndex = 1;
-
-        // Swap active and next video
-        [activeVideo, nextVideo] = [nextVideo, activeVideo];
-
-        // Set next callback
-        activeVideo.onended = playNext;
-      };
+    // Function to load and play a video by index
+    function playVideo(index) {
+      player.src = playlist[index];
+      player.load();
+      player.play().catch(err => console.error("Playback error:", err));
     }
 
-    // Start the first video
-    activeVideo.src = playlist[current];
-    activeVideo.onended = playNext;
-    activeVideo.load();
-    activeVideo.play();
+    // When a video ends, play the next one
+    player.onended = () => {
+      current = (current + 1) % playlist.length;
+      playVideo(current);
+    };
 
-    // Periodically check for updates and reload page if needed
+    // Start playback from the first video
+    playVideo(current);
+
+    // Optional: reload the page every 60 seconds to check for updates
     setInterval(() => {
       fetch(window.location.href, { method: 'HEAD', cache: 'no-store' })
         .then(response => {
@@ -85,7 +73,7 @@
             location.reload();
           }
         })
-        .catch(err => console.log('Update check failed', err));
+        .catch(err => console.log('Update check failed:', err));
     }, 60000); // Check every 60 seconds
   </script>
 </body>
