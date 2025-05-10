@@ -4,6 +4,7 @@
   <meta charset="UTF-8" />
   <title>GirlPower</title>
 
+  <!-- Auto-refresh page every hour -->
   <meta http-equiv="refresh" content="3600">
 
   <style>
@@ -40,7 +41,6 @@
   <div class="info">Proszę nie wyłączać urządzenia.</div>
 
   <script>
-    // Full playlist
     const playlist = [
       "video1.mp4",
       "video2.mp4",
@@ -54,26 +54,29 @@
     function playVideo(index) {
       player.src = playlist[index];
       player.load();
-      player.play().catch(err => console.error(`Błąd odtwarzania ${playlist[index]}:`, err));
+      player.play().catch(err => {
+        console.error(`Błąd odtwarzania ${playlist[index]}:`, err);
+      });
     }
 
-    player.onended = () => 
+    player.onended = () => {
       current = (current + 1) % playlist.length;
       playVideo(current);
     };
 
-    // Start the first video
+    // Start first video
     playVideo(current);
 
-    // Optional auto-reload every 60 seconds to check for updates
+    // Reload page every 60s to check for updates
     setInterval(() => {
       fetch(window.location.href, { method: 'HEAD', cache: 'no-store' })
         .then(response => {
           if (response.ok) location.reload();
         })
-        .catch(err => console.log('Update check failed:', err));
+        .catch(err => {
+          console.log('Update check failed:', err);
+        });
     }, 60000);
   </script>
 </body>
 </html>
-
