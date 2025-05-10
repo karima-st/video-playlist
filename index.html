@@ -17,7 +17,7 @@
       position: absolute;
       width: 100vw;
       height: 100vh;
-      object-fit: contain; /* show full video without cropping */
+      object-fit: contain;
       background-color: black;
     }
     .info {
@@ -43,7 +43,7 @@
   <div class="info">This is what YOU need!</div>
 
   <script>
-    // Array of video files to loop through
+    // Video playlist
     const playlist = [
       "video1.mp4",
       "video2.mp4",
@@ -53,23 +53,26 @@
     let current = 0;
     const player = document.getElementById("player");
 
-    // Function to load and play a video by index
+    // Load and play current video
     function playVideo(index) {
       player.src = playlist[index];
       player.load();
       player.play().catch(err => console.error("Playback error:", err));
     }
 
-    // When a video ends, play the next one
-    player.onended = () => {
-      current = (current + 1) % playlist.length;
-      playVideo(current);
-    };
+    // Fallback mechanism using timeupdate in case onended fails
+    player.addEventListener("timeupdate", () => {
+      if (player.duration - player.currentTime < 0.3) {
+        // small buffer to prevent skipping
+        current = (current + 1) % playlist.length;
+        playVideo(current);
+      }
+    });
 
-    // Start playback from the first video
+    // Initial video playback
     playVideo(current);
 
-    // Optional: reload the page every 60 seconds to check for updates
+    // Optional: reload page every 60 seconds to check for updates
     setInterval(() => {
       fetch(window.location.href, { method: 'HEAD', cache: 'no-store' })
         .then(response => {
