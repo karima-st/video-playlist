@@ -14,20 +14,33 @@ const playlist = [
 ];
 
 let currentIndex = 0;
+let retryCount = 0;
+const maxRetries = 5;
+
+let preloadedVideo = null;
 
 // Function to load and play the current video
 function playVideo(index) {
-  videoPlayer.src = playlist[index];
+  const videoSrc = playlist[index];
+  videoPlayer.src = videoSrc;
   videoPlayer.load();
 
-  // Try to play the video, retry on failure instead of reloading
+  // Try to play the video, retry on failure
   videoPlayer.play().catch(err => {
-    console.warn('Playback error. Retrying in 2 seconds:', err);
-    setTimeout(() => playVideo(index), 2000); // Retry after delay
+    console.warn(`Playback error for ${videoSrc}. Retry #${retryCount + 1}:`, err);
+    retryCount++;
+
+    if (retryCount >= maxRetries) {
+      console.warn(`Skipping ${videoSrc} after ${maxRetries} failed attempts.`);
+      retryCount = 0;
+      currentIndex = (currentIndex + 1) % playlist.length;
+      playVideo(currentIndex);
+      preloadNextVideo();
+    } else {
+      setTimeout(() => playVideo(index), 2000); // Retry after delay
+    }
   });
 }
-
-let preloadedVideo = null;
 
 // Function to preload the next video in the playlist
 function preloadNextVideo() {
@@ -51,7 +64,7 @@ setInterval(() => {
   location.reload();
 }, 43200000); // 12 hours = 43,200,000 milliseconds
 
-// Check for new GitHub commit SHA to detect updated version
+// Check for GitHub commit SHA to detect updates
 let lastCommitSHA = null;
 
 function checkForUpdateByCommitSHA() {
@@ -77,15 +90,12 @@ setInterval(checkForUpdateByCommitSHA, 60000);
 
 // Start playing the first video
 playVideo(currentIndex);
-
-// Preload the next video
 preloadNextVideo();
 
-// When the video ends, play the next one and preload after switching
+// When the video ends, play the next one and preload it
 videoPlayer.addEventListener('ended', () => {
+  retryCount = 0; // Reset retry counter on successful playthrough
   currentIndex = (currentIndex + 1) % playlist.length;
   playVideo(currentIndex);
-  
-  // Preload the next video after switching
   preloadNextVideo();
 });
