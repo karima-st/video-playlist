@@ -27,13 +27,22 @@ function playVideo(index) {
   });
 }
 
+let preloadedVideo = null;
+
 // Function to preload the next video in the playlist
 function preloadNextVideo() {
-  const nextVideo = document.createElement('video');
-  nextVideo.src = playlist[(currentIndex + 1) % playlist.length];
-  nextVideo.preload = "auto";
-  nextVideo.style.display = "none";
-  document.body.appendChild(nextVideo);
+  // Remove previous preloaded video if exists
+  if (preloadedVideo) {
+    document.body.removeChild(preloadedVideo);
+    preloadedVideo = null;
+  }
+
+  // Create and preload the next video
+  preloadedVideo = document.createElement('video');
+  preloadedVideo.src = playlist[(currentIndex + 1) % playlist.length];
+  preloadedVideo.preload = "auto";
+  preloadedVideo.style.display = "none";
+  document.body.appendChild(preloadedVideo);
 }
 
 // Reload the page every 12 hours to ensure stability
