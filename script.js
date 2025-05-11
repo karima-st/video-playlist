@@ -25,9 +25,11 @@ function playVideo(index) {
 
 // Function to preload the next video in the playlist
 function preloadNextVideo() {
-  const nextVideo = new Video();
+  const nextVideo = document.createElement('video'); // Create a real video element
   nextVideo.src = playlist[(currentIndex + 1) % playlist.length];
-  nextVideo.preload = "auto";  // Preload the next video
+  nextVideo.preload = "auto";
+  nextVideo.style.display = "none"; // Hide the element (not visible to user)
+  document.body.appendChild(nextVideo); // Append to DOM to ensure preload
 }
 
 // Reload the page every 12 hours to ensure stability
