@@ -21,6 +21,7 @@ let preloadedVideo = null;
 // Function to load and play the current video
 function playVideo(index) {
   const videoSrc = playlist[index];
+  console.log(`Playing video: ${videoSrc}`);
   videoPlayer.src = videoSrc;
   videoPlayer.load();
 
